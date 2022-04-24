@@ -1,0 +1,120 @@
+// 
+// German Language File
+//
+
+<!-- language file start -->
+obj_xesr#:#SMART vhb-Einheit
+objs_xesr#:#SMART vhb-Einheiten
+obj_xesr_duplicate#:#Kopieren
+objs_xesr_duplicate#:#Kopiere SMART vhb-Einheit
+obj_xesr_select#:#SMART vhb-Einheit auswählen
+xesr_add#:#SMART vhb-Einheit hinzufügen
+xesr_new#:#Neue SMART vhb-Einheit
+xesr_read#:#Lesezugriff auf SMART vhb-Einheit
+xesr_write#:#Schreibzugriff auf SMART vhb-Einheit
+xesr_delete#:#SMART vhb-Einheit löschen
+xesr_visible#:#SMART vhb-Einheit ist sichtbar
+xesr_edit_permission#:#Rechteeinstellungen ändern
+crs_create_xesr#:#SMART vhb-Einheit erstellen
+grp_create_xesr#:#SMART vhb-Einheit erstellen
+fold_create_xesr#:#SMART vhb-Einheit erstellen
+root_create_xesr#:#SMART vhb-Einheit erstellen
+cat_create_xesr#:#SMART vhb-Einheit erstellen
+content#:#Inhalt
+properties#:#Einstellungen
+edit_properties#:#Einstellungen ändern
+title#:#Titel
+description#:#Beschreibung
+option_one#:#Einstellung eins
+option_two#:#Einstellung zwei
+save#:#Speichern
+cancel#:#Abbrechen
+edit#:#Editieren
+status#:#Status
+offline#:#Offline
+select_resource#:#Einheit auswählen
+browse#:#Browsen
+search#:#Suchen
+uri#:#URI
+configuration_saved#:#Konfiguration gespeichert
+edus_configuration#:#edu-sharing Konfiguration
+show_block#:#Block anzeigen
+config_dir#:#Config Verzeichnis
+config#:#Konfiguration
+config_dir_read#:#Config Verzeichnis lesbar
+yes#:#Ja
+no#:#Nein
+save#:#Speichern
+settings#:#Einstellungen
+show_configuration#:#Konfiguration anzeigen
+not_usable_no_course#:#SMART vhb-Einheitn können nur innerhalb von Kursen genutzt werden. Dieses Objekt befindet sich zur Zeit nicht in einem Kurs.
+usage_not_registered#:#Die Nutzung des Objektes innerhalb dieses Kurses wurde noch nicht registriert.
+register_usage#:#Nutzung registrieren
+upload#:#Hochladen
+generate_ssl_keys_failed#:#Generating of SSL keys failed. Please check your configuration.
+application_properties#:#Application properties (application_)
+application_appid#:#appid
+application_type#:#type
+application_homerepid#:#homerepid
+application_cc_gui_url#:#cc_gui_url
+application_private_key#:#private_key
+application_public_key#:#public_key
+application_blowfishkey#:#blowfishkey
+application_blowfishiv#:#blowfishiv
+repository_properties#:#Repository properties (repository_)
+repository_public_key#:#public key
+repository_clientport#:#clientport
+repository_port#:#port
+repository_domain#:#domain
+repository_authenticationwebservice_wsdl#:#authenticationwebservice wsdl
+repository_type#:#type
+repository_appid#:#appid
+repository_usagewebservice_wsdl#:#usagewebservice_wsdl
+repository_protocol#:#protocol
+repository_host#:#host
+repository_version#:#version
+repository_version_info#:#Standard: 4.2
+authentication_properties#:#Authentication properties (EDU_AUTH_)
+edu_auth_key#:#Key zur Identifizierung des Nutzers
+edu_auth_id#:#Benutzername
+edu_auth_id_info#:#Benutzername wie er auch für die Anmeldung bei ILIAS genutzt wird (nicht empfohlen)
+edu_auth_idnumber#:#User-Id
+edu_auth_idnumber_info#:#ILIAS-User-Id (eingeschränkt empfohlen)
+edu_auth_email#:#E-Mail
+edu_auth_email_info#:#erste E-Mail-Adresse des Benutzers (eingeschränkt empfohlen)
+edu_auth_username#:#Vor- und Nachname des Benutzers
+edu_auth_username_info#:#Vor- und Nachname des Benutzers (nicht empfohlen)
+edu_auth_idnumber_http_path_client_id#:#Kombination aus User-Id, URL und Mandant
+edu_auth_idnumber_http_path_client_id_info#:#Kombination aus User-Id mit Adresse (URL) der ILIAS-Installation und Angabe des Mandanten, z.B.
+edu_auth_shibbolethuid#:#Shibboleth-UId
+edu_auth_shibbolethuid_info#:#Shibboleth-UId
+edu_auth_zoerr_auth#:#ZOERR-Authentifizierung
+edu_auth_zoerr_auth_info#:#ZOERR-spezielle, auf Shibboleth aufbauende Authentifizierung
+edu_auth_param_name_userid#:#PARAM_NAME_USERID
+edu_auth_param_name_userid_info#:#Standard: username
+edu_auth_param_name_lastname#:#PARAM_NAME_LASTNAME
+edu_auth_param_name_lastname_info#:#Standard: lastname
+edu_auth_param_name_firstname#:#PARAM_NAME_FIRSTNAME
+edu_auth_param_name_firstname_info#:#Standard: firstname
+edu_auth_param_name_email#:#PARAM_NAME_EMAIL
+edu_auth_param_name_email_info#:#Standard: email
+edu_auth_affiliation#:#AFFILIATION
+edu_auth_affiliation_info#:#Standard:
+edu_auth_affiliation_name#:#AFFILIATION_NAME
+edu_auth_affiliation_name_info#:#Standard:
+edu_auth_conveyglobalgroups#:#CONVEYGLOBALGROUPS
+edu_auth_conveyglobalgroups_info#:#Standard: Nein 
+guest_properties#:#Guest properties (edu_guest_)
+edu_guest_option#:#Gastzugang für alle
+edu_guest_option_info#:#Standard: Nein; Aktivieren Sie diese Option wenn die (gemeinsame) Authentifizierung mit einem zentralen edu-sharing-Repositorium noch nicht geklärt ist oder Datenschutzerfordernisse die Übermittlung von z.B. einer UserID oder eines Nachnamens zum edu-sharing-Repositorium nicht erlauben. ILIAS-Benutzer mit der globalen Rollen 'Anonymous' erhalten stets nur einen Gastzugang für das edu-sharing-Repositorium.
+edu_guest_guest_id#:#guest_id
+edu_guest_guest_id_info#:#Standard: esguest
+import_metadata#:#Mit Heimat-Repositorium verbinden
+import_application_metadata#:#Mit Heimat-Repositorium verbinden (Achtung: Konfigurationsdaten werden überschrieben)
+metadata_endpoint#:# Metadata endpoint
+metadata_endpoint_info#:#Beispiel: http://edu-sharing-server/edu-sharing/metadata?format=lms
+metadata_import#:#Metadaten importieren
+object_version_use_exact#:#Kein Update dieser Version
+object_version_use_exact_info#:#Die Einheit verbliebe bei Version
+not_visible_now#:#Die Einheit kann vorübergehend nicht angezeigt werden.
+no_resource_set#:#Keine Einheit wurde ausgewählt. Die Einstellungen sollten bei diesem Objekt überprüft werden.
