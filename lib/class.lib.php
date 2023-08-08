@@ -310,7 +310,7 @@ function edusharing_delete_instance($a_edu_obj, $a_uri, $a_parent_obj_id) {
     }
 
     // Usage is removed so it can be deleted from DATABASE .
-	$edusharing->deleteUsage($a_edu_obj, $a_uri, $a_parent_obj_id);
+    $a_edu_obj->deleteUsage($a_edu_obj, $a_uri, $a_parent_obj_id);
 
     return true;
 
