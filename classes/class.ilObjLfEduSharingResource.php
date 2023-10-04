@@ -294,7 +294,11 @@ class ilObjLfEduSharingResource extends ilObjectPlugin //implements ilLPStatusPl
 			" WHERE id = ".$DIC->database()->quote($this->getId(), "integer")
 			);
 		while ($rec  = $DIC->database()->fetchAssoc($set)) {
-			edusharing_delete_instance($this->getId(), $rec['edus_uri'], $rec['parent_obj_id']);
+			try {
+			   edusharing_delete_instance($this->getId(), $rec['edus_uri'], $rec['parent_obj_id']);
+			}
+			catch (Exception $e) {
+			}
 		}
 		$DIC->database()->manipulate("DELETE FROM rep_robj_xesr_usage WHERE ".
 			" id = ".$DIC->database()->quote($this->getId(), "integer")
