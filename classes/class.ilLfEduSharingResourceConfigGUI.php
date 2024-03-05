@@ -1,9 +1,9 @@
 <?php
 
-/* Copyright (c) 2012 Leifos GmbH, GPL */
+/* Copyright (c) 2023 internetlehrer GmbH, GPL */
 
-include_once("./Services/Component/classes/class.ilPluginConfigGUI.php");
- 
+use EduSharingApiClient\EduSharingHelper;
+
 /**
  * Edusharing resource configuration user interface class
  *
@@ -30,6 +30,10 @@ class ilLfEduSharingResourceConfigGUI extends ilPluginConfigGUI
 	 * @var ilTemplate
 	 */
 	protected $tpl;
+
+	private ?string $hostaliases  = null;
+
+	private ?string $wloguestuser = null;
 
 	/**
 	 *
@@ -107,39 +111,95 @@ class ilLfEduSharingResourceConfigGUI extends ilPluginConfigGUI
 				$mde = $form->getInput("metadata_endpoint");
 				$xml = new DOMDocument();
 				libxml_use_internal_errors(true);
-				if ($xml->load($mde) == false) {
+
+				$curlConnection = new ilCurlConnection($mde);
+				$curlConnection->init();
+				$curlConnection->setOpt(CURLOPT_SSL_VERIFYPEER, false);
+				$curlConnection->setOpt(CURLOPT_SSL_VERIFYHOST, false);
+				$curlConnection->setOpt(CURLOPT_FOLLOWLOCATION, 1);
+				$curlConnection->setOpt(CURLOPT_HEADER, 0);
+				$curlConnection->setOpt(CURLOPT_RETURNTRANSFER, 1);
+				$curlConnection->setOpt(CURLOPT_VERBOSE, false);
+				$curlConnection->setOpt(CURLOPT_TIMEOUT, 30);
+				$proxy = ilProxySettings::_getInstance();
+				if ($proxy->isActive()) {
+					$curlConnection->setOpt(CURLOPT_HTTPPROXYTUNNEL, true);
+
+					if (!empty($proxy->getHost())) {
+						$curlConnection->setOpt(CURLOPT_PROXY, $proxy->getHost());
+					}
+
+					if (!empty($proxy->getPort())) {
+						$curlConnection->setOpt(CURLOPT_PROXYPORT, $proxy->getPort());
+					}
+//				} else {
+//					if ($xml->load($mde) == false) {
+//						ilUtil::sendFailure($this->pl->txt("import_metadata_failure"), true);
+//						$this->ctrl->redirect($this, "importMetadata");
+//					}
+				}
+				$metadata = $curlConnection->exec();
+				$curlConnection->close();
+				$curlConnection = null;
+				if (!$xml->loadXML($metadata)) {
 					ilUtil::sendFailure($this->pl->txt("import_metadata_failure"), true);
 					$this->ctrl->redirect($this, "importMetadata");
 				}
-				
+
 				$xml->preserveWhiteSpace = false;
-				$xml->formatOutput = true;
-				$entrys = $xml->getElementsByTagName('entry');
-				
+				$xml->formatOutput       = true;
+				$entries                 = $xml->getElementsByTagName('entry');
 				$settings = new ilSetting("xedus");
 				$settings->set("metadata_endpoint", $mde);
-				foreach ($entrys as $entry) {
+
+				$repoid     = $settings->get('repository_appid');
+				$privatekey = $settings->get('application_private_key');
+				$publickey  = $settings->get('application_public_key');
+				foreach ($entries as $entry) {
 					$settings->set('repository_'.$entry->getAttribute('key'), $entry->nodeValue);
 				}
-				require_once(__DIR__ . '/../lib/class.AppPropertyHelper.php');
-				$modedusharingapppropertyhelper = new mod_edusharing_app_property_helper();
-				$sslkeypair = $modedusharingapppropertyhelper->edusharing_get_ssl_keypair();
-				
-				$host = $_SERVER['SERVER_ADDR'];
-				if(empty($host)) $host = gethostbyname($_SERVER['SERVER_NAME']);
-				
+				if (empty ($host)) {
+					if (! empty($_SERVER['SERVER_ADDR'])) {
+						$host = $_SERVER['SERVER_ADDR'];
+					} else if (! empty($_SERVER['SERVER_NAME'])) {
+						$host = gethostbyname($_SERVER['SERVER_NAME']);
+					} else {
+						throw new Exception('Host could not be discerned. Cancelling ES-registration process.');
+					}
+				}
+
+				$clientprotocol = $settings->get('repository_clientprotocol');
+				$repodomain     = $settings->get('repository_domain');
+				$clientport     = $settings->get('repository_clientport');
 				$settings->set('application_host', $host);
-				$settings->set('application_appid', 'ILIAS_'.CLIENT_ID);
+				$settings->set('application_appid', 'ILIAS_'.CLIENT_ID); //Todo?
 				$settings->set('application_type', 'LMS');
-				$settings->set('application_homerepid', $settings->get('repository_appid'));
-				$settings->set('application_cc_gui_url', $settings->get('repository_clientprotocol') . '://' .
-						$settings->get('repository_domain') . ':' .
-						$settings->get('repository_clientport') . '/edu-sharing/');
-				$settings->set('application_private_key', $sslkeypair['privateKey']);
-				$settings->set('application_public_key', $sslkeypair['publicKey']);
+				$settings->set('application_homerepid', $repoid);
+				$settings->set(
+					'application_cc_gui_url', $clientprotocol . '://' . $repodomain . ':' . $clientport . '/edu-sharing/'
+				);
+				if ($this->hostaliases !== null) {
+					$settings->set('application_host_aliases', $this->hostaliases);
+				}
+				if ($this->wloguestuser !== null) {
+					$settings->set('wlo_guest_option', '1');
+					$settings->set('edu_guest_guest_id', $this->wloguestuser);
+				}
+
+//				$modedusharingapppropertyhelper = new mod_edusharing_app_property_helper();
+//				$sslkeypair = $modedusharingapppropertyhelper->edusharing_get_ssl_keypair();
+				if (empty($privatekey) || empty($publickey)) {
+					$keypair = EduSharingHelper::generateKeyPair();
+					$settings->set('application_private_key', $keypair['privateKey']);
+					$settings->set('application_public_key', $keypair['publicKey']);
+				}
+
+				if (empty($settings->get('application_private_key'))) {
+					ilUtil::sendFailure($this->pl->txt("generate_ssl_keys_failed"), true);
+					$this->ctrl->redirect($this, "importMetadata");
+				}
 				$settings->set('application_blowfishkey', 'thetestkey');
 				$settings->set('application_blowfishiv', 'initvect');
-
 				$settings->set('EDU_AUTH_KEY', 'username');
 				$settings->set('EDU_AUTH_PARAM_NAME_USERID', 'userid');
 				$settings->set('EDU_AUTH_PARAM_NAME_LASTNAME', 'lastname');
@@ -148,11 +208,6 @@ class ilLfEduSharingResourceConfigGUI extends ilPluginConfigGUI
 				$settings->set('EDU_AUTH_AFFILIATION', ''); //$CFG->siteidentifier
 				$settings->set('EDU_AUTH_AFFILIATION_NAME', ''); //$CFG->siteidentifier
 
-				if (empty($sslkeypair['privateKey'])) {
-					ilUtil::sendFailure($this->pl->txt("generate_ssl_keys_failed"), true);
-					$this->ctrl->redirect($this, "importMetadata");
-				}
-				
 				ilUtil::sendSuccess($this->pl->txt("import_metadata_saved"), true);
 				$this->ctrl->redirect($this, "configure");
 			} catch (Exception $e) {
@@ -312,9 +367,10 @@ class ilLfEduSharingResourceConfigGUI extends ilPluginConfigGUI
         $rg->addOption($ro);
         $ro = new ilRadioOption($this->pl->txt('edu_auth_zoerr_auth'),'ZOERR_Auth', $this->pl->txt('edu_auth_zoerr_auth_info'));
         $rg->addOption($ro);
+        $ro = new ilRadioOption($this->pl->txt('edu_auth_random_uid'), 'randomUId', $this->pl->txt('edu_auth_random_uid_info'). ' ' . ilCmiXapiUser::getIliasUuid());
+        $rg->addOption($ro);
 		$form->addItem($rg);
-	
-		
+
 		$ti = new ilTextInputGUI($this->pl->txt('edu_auth_param_name_userid'), 'EDU_AUTH_PARAM_NAME_USERID');
 		$ti->setMaxLength(50);
 		$ti->setInfo($this->pl->txt('edu_auth_param_name_userid_info'));
@@ -356,6 +412,12 @@ class ilLfEduSharingResourceConfigGUI extends ilPluginConfigGUI
 		// $cb->setValue('1');
 		// if ($settings->get('EDU_AUTH_CONVEYGLOBALGROUPS') == '1') $cb->setChecked(true);
 		// $form->addItem($cb);
+
+		 $cb = new ilCheckboxInputGUI($this->pl->txt('send_additional_auth'), 'send_additional_auth');
+		 $cb->setInfo($this->pl->txt('send_additional_auth_info'));
+		 $cb->setValue('1');
+		 if ($settings->get('send_additional_auth') == '1') $cb->setChecked(true);
+		 $form->addItem($cb);
 
 
 		$sh = new ilFormSectionHeaderGUI();
@@ -425,7 +487,12 @@ class ilLfEduSharingResourceConfigGUI extends ilPluginConfigGUI
 			$settings->set('EDU_AUTH_PARAM_NAME_EMAIL', $form->getInput('EDU_AUTH_PARAM_NAME_EMAIL'));
 			$settings->set('EDU_AUTH_AFFILIATION', $form->getInput('EDU_AUTH_AFFILIATION'));
 			$settings->set('EDU_AUTH_AFFILIATION_NAME', $form->getInput('EDU_AUTH_AFFILIATION_NAME'));
-			$settings->set('EDU_AUTH_CONVEYGLOBALGROUPS', $form->getInput('EDU_AUTH_CONVEYGLOBALGROUPS'));
+//			$settings->set('EDU_AUTH_CONVEYGLOBALGROUPS', $form->getInput('EDU_AUTH_CONVEYGLOBALGROUPS'));
+			$settings->set('send_additional_auth', $form->getInput('send_additional_auth'));
+			if ($form->getInput('EDU_AUTH_KEY') == 'randomUId') {
+				$settings->set('send_additional_auth', '0');
+			}
+
 			$settings->set('edu_guest_option', $form->getInput('edu_guest_option'));
 			$settings->set('edu_guest_guest_id', $form->getInput('edu_guest_guest_id'));
 			
@@ -500,10 +567,8 @@ class ilLfEduSharingResourceConfigGUI extends ilPluginConfigGUI
 	/**
 	 * Set tabs
 	 *
-	 * @param
-	 * @return
 	 */
-	function setTabs($a_active)
+	function setTabs($a_active) : void
 	{
 		// $pl = $this->getPluginObject();
 		

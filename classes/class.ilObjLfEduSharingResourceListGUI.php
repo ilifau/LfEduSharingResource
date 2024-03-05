@@ -73,6 +73,12 @@ class ilObjLfEduSharingResourceListGUI extends ilObjectPluginListGUI
 	function getProperties()
 	{
 		$props = array();
+		$parent_id = ilObject::_lookupObjId($this->parent_ref_id);
+
+		if(!ilObjLfEduSharingResourceAccess::checkOnline($this->obj_id, $parent_id)) {
+			$props[] = array("alert" => true, "property" => $this->txt("status"),
+			                 "value" => $this->txt("offline"));
+		}
 
 		return $props;
 	}

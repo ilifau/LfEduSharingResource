@@ -14,9 +14,14 @@ chdir("../../../../../../../");
 
 // Avoid redirection to start screen
 // (see ilInitialisation::InitILIAS for details)
-$_GET["baseClass"] = "ilStartUpGUI";
+//$_GET["baseClass"] = "ilStartUpGUI";
+//require_once "./include/inc.header.php";
+include_once "Services/Context/classes/class.ilContext.php";
+ilContext::init(ilContext::CONTEXT_SCORM);
 
-require_once "./include/inc.header.php";
+require_once("Services/Init/classes/class.ilInitialisation.php");
+ilInitialisation::initILIAS();
+
 
 $settings = new ilSetting("xedus");
 // $appid = $settings->get('application_appid');
@@ -25,6 +30,12 @@ $settings = new ilSetting("xedus");
 // $domain = gethostbyname($_SERVER['SERVER_NAME']);
 // $key = $settings->get('application_public_key');
 // $appcaption = '';
+//$output =\EduSharingApiClient\EduSharingHelper::generateEduAppXMLData(
+//    $settings->get('application_appid'),
+//    $settings->get('application_public_key'),
+//    'LMS',
+//    '*');
+
 
 
 $xml = new SimpleXMLElement(
@@ -48,6 +59,11 @@ $entry = $xml->addChild('entry', $settings->get('application_public_key'));
 $entry->addAttribute('key', 'public_key');
 $entry = $xml->addChild('entry', $settings->get('EDU_AUTH_AFFILIATION_NAME'));
 $entry->addAttribute('key', 'appcaption');
+// ToDo
+//if ($this->utils->getConfigEntry('wlo_guest_option')) {
+//    $entry = $xml->addChild('entry', $this->utils->getConfigEntry('edu_guest_guest_id'));
+//    $entry->addAttribute('key', 'auth_by_app_user_whitelist');
+//}
 
 header('Content-type: text/xml');
 print(html_entity_decode($xml->asXML()));

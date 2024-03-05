@@ -73,7 +73,7 @@ repository_usagewebservice_wsdl#:#usagewebservice_wsdl
 repository_protocol#:#protocol
 repository_host#:#host
 repository_version#:#version
-repository_version_info#:#Standard: 4.2
+repository_version_info#:#Standard: 8.0
 authentication_properties#:#Authentication properties (EDU_AUTH_)
 edu_auth_key#:#Key to identify user
 edu_auth_id#:#User name
@@ -90,6 +90,8 @@ edu_auth_shibbolethuid#:#Shibboleth-UId
 edu_auth_shibbolethuid_info#:#Shibboleth-UId
 edu_auth_zoerr_auth#:#ZOERR-authentication
 edu_auth_zoerr_auth_info#:#ZOERR-special, on Shibboleth building authentication
+edu_auth_random_uid#:#Random ID combined with a unique ILIAS platform ID formatted as an E-Mail address
+edu_auth_random_uid_info#:#For each ILIAS user a random ID is generated which remains identical for each call. The unique ILIAS platform id is:
 edu_auth_param_name_userid#:#PARAM_NAME_USERID
 edu_auth_param_name_userid_info#:#Standard: username
 edu_auth_param_name_lastname#:#PARAM_NAME_LASTNAME
@@ -109,12 +111,15 @@ edu_guest_option#:#Guest access for everyone
 edu_guest_option_info#:#Standard: no; Activate this option, if the (common) authentication with a central edu-sharing repository is not clarified yet or if data protection requirements do not allow the transfer of i.e. user-id or a last name towards the edu-sharing repository. ILIAS-Users with the global roles 'Anonymous' always receive a guest access only for the edu-sharing repository. 
 edu_guest_guest_id#:#guest_id
 edu_guest_guest_id_info#:#Standard: esguest
-import_metadata#:#Connect with home-repository 
+import_metadata#:#Connect with home-repository
+import_metadata_saved#:#Successfully stored
 import_application_metadata#:#Connect with home-repository (Attention: configuration data will be overwritten) 
 metadata_endpoint#:# Metadata endpoint
-metadata_endpoint_info#:#example: http://edu-sharing-server/edu-sharing/metadata?format=lms
+metadata_endpoint_info#:#example: http://edu-sharing-server/edu-sharing/metadata?format=lms&external=true
 metadata_import#:#Import metadata
 object_version_use_exact#:#No update of this version 
 object_version_use_exact_info#:#The resource remains in version 
 not_visible_now#:#The resource cannot be displayed temporarily. 
 no_resource_set#:#No resource was set. The settings for this object should be checked.
+send_additional_auth#:#Send additional auth information
+send_additional_auth_info#:#If checked, the app authentication request will include the first and last name as well as email address.
