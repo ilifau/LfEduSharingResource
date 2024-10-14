@@ -201,8 +201,6 @@ if(!$ilDB->tableColumnExists('rep_robj_xesr_usage', 'timemodified')) {
 }
 
 ?>
-<<<<<<< HEAD
-=======
 <#13>
 <?php
 if (!$ilDB->tableExists('rep_robj_xesr_users')) {
@@ -223,4 +221,3 @@ if (!$ilDB->tableExists('rep_robj_xesr_users')) {
     $ilDB->addPrimaryKey('rep_robj_xesr_users', array('usr_id'));
 }
 ?>
->>>>>>> original-plugin/kohnle_release_7
