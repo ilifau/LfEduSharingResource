@@ -3,6 +3,7 @@
 //
 
 <!-- language file start -->
+<<<<<<< HEAD
 obj_xesr#:#SMART vhb Unit
 objs_xesr#:#SMART vhb Units
 obj_xesr_duplicate#:#Copy
@@ -20,6 +21,25 @@ grp_create_xesr#:#Create SMART vhb Unit
 fold_create_xesr#:#Create SMART vhb Unit
 root_create_xesr#:#Create SMART vhb Unit
 cat_create_xesr#:#Create SMART vhb Unit
+=======
+obj_xesr#:#edu-sharing Resource
+objs_xesr#:#edu-sharing Resources
+obj_xesr_duplicate#:#Copy
+objs_xesr_duplicate#:#Copy edu-sharing Resource
+obj_xesr_select#:#Select edu-sharing Resource
+xesr_add#:#Add edu-sharing Resource
+xesr_new#:#Add New edu-sharing Resource
+xesr_read#:#Read access to edu-sharing Resource
+xesr_write#:#Edit edu-sharing Resource
+xesr_delete#:#Delete edu-sharing Resource
+xesr_visible#:#edu-sharing Resource is visible
+xesr_edit_permission#:#Change permission settings
+crs_create_xesr#:#Create edu-sharing Resource
+grp_create_xesr#:#Create edu-sharing Resource
+fold_create_xesr#:#Create edu-sharing Resource
+root_create_xesr#:#Create edu-sharing Resource
+cat_create_xesr#:#Create edu-sharing Resource
+>>>>>>> original-plugin/kohnle_release_7
 content#:#Content
 properties#:#Properties
 edit_properties#:#Edit Properties
@@ -32,7 +52,11 @@ cancel#:#Cancel
 edit#:#Edit
 status#:#Status
 offline#:#Offline
+<<<<<<< HEAD
 select_resource#:#Select Unit
+=======
+select_resource#:#Select Resource
+>>>>>>> original-plugin/kohnle_release_7
 browse#:#Browse
 search#:#Search
 uri#:#URI
@@ -47,7 +71,11 @@ no#:#No
 save#:#Save
 settings#:#Settings
 show_configuration#:#Show Configuration
+<<<<<<< HEAD
 not_usable_no_course#:#Please note that SMART vhb Units may only used in courses. This instance is not running inside a course.
+=======
+not_usable_no_course#:#Please note that edu-sharing resources may only used in courses. This instance is not running inside a course.
+>>>>>>> original-plugin/kohnle_release_7
 usage_not_registered#:#The usage of this object within this course is not registered yet. To use it in this place, please register the usage.
 register_usage#:#Register Usage
 upload#:#Upload
@@ -73,7 +101,11 @@ repository_usagewebservice_wsdl#:#usagewebservice_wsdl
 repository_protocol#:#protocol
 repository_host#:#host
 repository_version#:#version
+<<<<<<< HEAD
 repository_version_info#:#Standard: 4.2
+=======
+repository_version_info#:#Standard: 8.0
+>>>>>>> original-plugin/kohnle_release_7
 authentication_properties#:#Authentication properties (EDU_AUTH_)
 edu_auth_key#:#Key to identify user
 edu_auth_id#:#User name
@@ -90,6 +122,11 @@ edu_auth_shibbolethuid#:#Shibboleth-UId
 edu_auth_shibbolethuid_info#:#Shibboleth-UId
 edu_auth_zoerr_auth#:#ZOERR-authentication
 edu_auth_zoerr_auth_info#:#ZOERR-special, on Shibboleth building authentication
+<<<<<<< HEAD
+=======
+edu_auth_random_uid#:#Random ID combined with a unique ILIAS platform ID formatted as an E-Mail address
+edu_auth_random_uid_info#:#For each ILIAS user a random ID is generated which remains identical for each call. The unique ILIAS platform id is:
+>>>>>>> original-plugin/kohnle_release_7
 edu_auth_param_name_userid#:#PARAM_NAME_USERID
 edu_auth_param_name_userid_info#:#Standard: username
 edu_auth_param_name_lastname#:#PARAM_NAME_LASTNAME
@@ -109,6 +146,7 @@ edu_guest_option#:#Guest access for everyone
 edu_guest_option_info#:#Standard: no; Activate this option, if the (common) authentication with a central edu-sharing repository is not clarified yet or if data protection requirements do not allow the transfer of i.e. user-id or a last name towards the edu-sharing repository. ILIAS-Users with the global roles 'Anonymous' always receive a guest access only for the edu-sharing repository. 
 edu_guest_guest_id#:#guest_id
 edu_guest_guest_id_info#:#Standard: esguest
+<<<<<<< HEAD
 import_metadata#:#Connect with home-repository 
 import_application_metadata#:#Connect with home-repository (Attention: configuration data will be overwritten) 
 metadata_endpoint#:# Metadata endpoint
@@ -118,3 +156,17 @@ object_version_use_exact#:#No update of this version
 object_version_use_exact_info#:#The unit remains in version
 not_visible_now#:#The unit cannot be displayed temporarily.
 no_resource_set#:#No unit was set. The settings for this object should be checked.
+=======
+import_metadata#:#Connect with home-repository
+import_metadata_saved#:#Successfully stored
+import_application_metadata#:#Connect with home-repository (Attention: configuration data will be overwritten) 
+metadata_endpoint#:# Metadata endpoint
+metadata_endpoint_info#:#example: http://edu-sharing-server/edu-sharing/metadata?format=lms&external=true
+metadata_import#:#Import metadata
+object_version_use_exact#:#No update of this version 
+object_version_use_exact_info#:#The resource remains in version 
+not_visible_now#:#The resource cannot be displayed temporarily. 
+no_resource_set#:#No resource was set. The settings for this object should be checked.
+send_additional_auth#:#Send additional auth information
+send_additional_auth_info#:#If checked, the app authentication request will include the first and last name as well as email address.
+>>>>>>> original-plugin/kohnle_release_7

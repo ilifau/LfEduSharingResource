@@ -1,9 +1,6 @@
 <?php
 
 /* Copyright (c) 2012 Leifos GmbH, GPL */
-
-include_once("./Services/Repository/classes/class.ilRepositoryObjectPlugin.php");
- 
 /**
 * Edusharing resource repository object plugin
 *
@@ -29,7 +26,7 @@ class ilLfEduSharingResourcePlugin extends ilRepositoryObjectPlugin
 
 	
 	protected function uninstallCustom() {
-		// TODO: Nothing to do here.
+		// TODO: delete database
 	}
 }
 ?>

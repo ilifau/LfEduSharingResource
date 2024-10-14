@@ -1,10 +1,8 @@
 <?php
 
-/* Copyright (c) 2012 Leifos GmbH, GPL */
+/* Copyright (c) 2023 internetlehrer GmbH, GPL */
 
-include_once("./Services/Repository/classes/class.ilObjectPluginGUI.php");
-include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/LfEduSharingResource/lib/class.lfEduUtil.php");
-
+use EduSharingApiClient\EduSharingHelperBase;
 
 /**
  * User Interface class for edusharing resource repository object.
@@ -12,7 +10,6 @@ include_once("./Customizing/global/plugins/Services/Repository/RepositoryObject/
  * User interface classes process GET and POST parameter and call
  * application classes to fulfill certain tasks.
  *
- * @author Alex Killing <alex.killing@gmx.de>
  * @author Uwe Kohnle <kohnle@internetlehrer-gmbh.de>
  *
  * $Id$
@@ -26,31 +23,30 @@ class ilObjLfEduSharingResourceGUI extends ilObjectPluginGUI
 {
 
 	/**
-	* Initialisation
-	*/
+	 * Initialisation
+	 */
 	protected function afterConstructor()
 	{
 		// anything needed after object has been constructed
 		// - example: append my_id GET parameter to each request
 		//   $ilCtrl->saveParameter($this, array("my_id"));
 	}
-	
+
 	/**
-	* Get type.
-	*/
+	 * Get type.
+	 */
 	final function getType()
 	{
 		return "xesr";
 	}
-	
+
 	/**
-	* Handles all commmands of this class, centralizes permission checks
-	*/
-	function performCommand($cmd)
+	 * Handles all commmands of this class, centralizes permission checks
+	 */
+	public function performCommand($cmd) : void
 	{
-		switch ($cmd)
-		{
-			case "editProperties":		// list all commands that need write permission here
+		switch ($cmd) {
+			case "editProperties":        // list all commands that need write permission here
 			case "updateProperties":
 			case "browseResource":
 			case "uploadResource":
@@ -60,8 +56,8 @@ class ilObjLfEduSharingResourceGUI extends ilObjectPluginGUI
 				$this->checkPermission("write");
 				$this->$cmd();
 				break;
-			
-			case "showContent":			// list all commands that need read permission here
+
+			case "showContent":            // list all commands that need read permission here
 				$this->checkPermission("read");
 				$this->$cmd();
 				break;
@@ -69,154 +65,144 @@ class ilObjLfEduSharingResourceGUI extends ilObjectPluginGUI
 	}
 
 	/**
-	* After object has been created -> jump to this command
-	*/
-	function getAfterCreationCmd()
+	 * After object has been created -> jump to this command
+	 */
+	public function getAfterCreationCmd()
 	{
 		return "editProperties";
 	}
 
 	/**
-	* Get standard command
-	*/
-	function getStandardCmd()
+	 * Get standard command
+	 */
+	public function getStandardCmd()
 	{
-		return "showContent";
+		return "infoScreen";//"showContent";
 	}
-	
+
 //
 // DISPLAY TABS
 //
-	
-	/**
-	* Set tabs
-	*/
-	function setTabs()
+
+	protected function setTabs()
 	{
 		global $DIC;
-		
+
 		// tab for the "show content" command
-		if ($DIC->access()->checkAccess("read", "", $this->object->getRefId()))
-		{
-			$DIC->tabs()->addTab("content", $this->txt("content"), $DIC->ctrl()->getLinkTarget($this, "showContent"), "_blank");
+		if ($DIC->access()->checkAccess("read", "", $this->object->getRefId())) {
+			$DIC->tabs()->addTab("content", $this->txt("content"), $DIC->ctrl()->getLinkTarget($this, "showContent")
+				, "_blank");
 		}
 
 		// standard info screen tab
 		$this->addInfoTab();
 
 		// a "properties" tab
-		if ($DIC->access()->checkAccess("write", "", $this->object->getRefId()))
-		{
-			$DIC->tabs()->addTab("properties", $this->txt("properties"), $DIC->ctrl()->getLinkTarget($this, "editProperties"));
+		if ($DIC->access()->checkAccess("write", "", $this->object->getRefId())) {
+			$DIC->tabs()->addTab("properties", $this->txt("properties"),
+				$DIC->ctrl()->getLinkTarget($this, "editProperties"));
 		}
 
 		// standard epermission tab
 		$this->addPermissionTab();
 	}
-	
 
 	/**
 	 * Edit Properties. This commands uses the form class to display an input form.
 	 */
-	function editProperties()
+	protected function editProperties()
 	{
 		global $DIC;
-		
+
 		$ilToolbar = $DIC->toolbar();
 		// toolbar
 		$ilToolbar->setFormAction($DIC->ctrl()->getFormAction($this));
-		if ($this->object->getUri() == "")
-		{
-		// //set parent_obj for edu-sharing
+		if ($this->object->getUri() == "") {
+			// //set parent_obj for edu-sharing
 			// $this->object->afterCreateSetParentObj();
 			$ilToolbar->addText($this->plugin->txt("select_resource"));
-			include_once("./Services/Form/classes/class.ilTextInputGUI.php");
-			$ti = new ilTextInputGUI("", "edus_svalue");
-			$ti->setMaxLength(200);
-			$ti->setSize(30);
+			$ti = new ilHiddenInputGUI("", "edus_svalue");
+//			$ti->setMaxLength(200);
+//			$ti->setSize(30);
 			$ilToolbar->addInputItem($ti, false);
 			$ilToolbar->addFormButton($this->plugin->txt("search"), "searchResource");
-			
-			$ilToolbar->addSeparator();
-			$ilToolbar->addFormButton($this->plugin->txt("upload"), "uploadResource");
-			
+
+			$settings = new ilSetting("xedus");
+			$guestoption = $settings->get('edu_guest_option');
+			if (empty($settings->get('edu_guest_option'))) {
+				$ilToolbar->addSeparator();
+				$ilToolbar->addFormButton($this->plugin->txt("upload"), "uploadResource");
+			}
+
 		}
-		
+
 		// check whether upper course is given
-		if ($this->object->getUri() != "" && $this->object->getUpperCourse() == 0)
-		{
+		if ($this->object->getUri() != "" && $this->object->getUpperCourse() == 0) {
 			ilUtil::sendFailure($this->plugin->txt("not_usable_no_parent_object"));
 		}
 		// else if ($this->object->getUri() == "" && !$this->object->checkRegisteredUsage())
 		// {
-			// ilUtil::sendFailure($this->plugin->txt("failure after copy"));
+		// ilUtil::sendFailure($this->plugin->txt("failure after copy"));
 		// }
-		else
-		{
+		else {
 			// check whether usage is registered
-			if ($this->object->getUri() != "" && !$this->object->checkRegisteredUsage())
-			{
+			if ($this->object->getUri() != "" && !$this->object->checkRegisteredUsage()) {
 				ilUtil::sendFailure($this->plugin->txt("usage_not_registered"));
-				if ($this->object->getUpperCourse() > 0)
-				{
+				if ($this->object->getUpperCourse() > 0) {
 					$ilToolbar->addFormButton($this->plugin->txt("register_usage"), "registerUsage");
 				}
 			}
 		}
-		
 		$DIC->tabs()->activateTab("properties");
 		$this->initPropertiesForm();
 		$this->getPropertiesValues();
 		$DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
 	}
-	
+
 	/**
-	* Init  form.
-	*
-	* @param        int        $a_mode        Edit Mode
-	*/
+	 * Init  form.
+	 * @param int $a_mode Edit Mode
+	 */
 	public function initPropertiesForm()
 	{
 		global $DIC;
-	
-		include_once("Services/Form/classes/class.ilPropertyFormGUI.php");
+
 		$this->form = new ilPropertyFormGUI();
-	
+
 		// title
 		$ti = new ilTextInputGUI($this->txt("title"), "title");
 		$ti->setRequired(true);
 		$this->form->addItem($ti);
-		
+
 		// description
 		$ta = new ilTextAreaInputGUI($this->txt("description"), "desc");
 		$this->form->addItem($ta);
-		
+
 		// online
 		$cb = new ilCheckboxInputGUI($this->lng->txt("online"), "online");
 		$this->form->addItem($cb);
-		
+
 		// version setting
 		$cb = new ilCheckboxInputGUI($this->plugin->txt("object_version_use_exact"), "object_version_use_exact");
 		$cb->setValue("1");
-		$cb->setInfo($this->plugin->txt("object_version_use_exact_info").' '.$this->object->getObjectVersion());
+		$cb->setInfo($this->plugin->txt("object_version_use_exact_info") . ' ' . $this->object->getObjectVersion());
 		$this->form->addItem($cb);
 
 		// uri
 		$ne = new ilNonEditableValueGUI($this->lng->txt("uri"), "uri");
 		$ne->setValue($this->object->getUri());
 		$this->form->addItem($ne);
-		
 
 		$this->form->addCommandButton("updateProperties", $this->txt("save"));
-	                
+
 		$this->form->setTitle($this->txt("edit_properties"));
 		$this->form->setFormAction($DIC->ctrl()->getFormAction($this));
 	}
-	
+
 	/**
-	* Get values for edit properties form
-	*/
-	function getPropertiesValues()
+	 * Get values for edit properties form
+	 */
+	protected function getPropertiesValues() : void
 	{
 		$values["title"] = $this->object->getTitle();
 		$values["desc"] = $this->object->getDescription();
@@ -225,17 +211,16 @@ class ilObjLfEduSharingResourceGUI extends ilObjectPluginGUI
 		$values["object_version_use_exact"] = $this->object->getObjectVersionUseExact();
 		$this->form->setValuesByArray($values);
 	}
-	
+
 	/**
-	* Update properties
-	*/
+	 * Update properties
+	 */
 	public function updateProperties()
 	{
 		global $DIC;
-	
+
 		$this->initPropertiesForm();
-		if ($this->form->checkInput())
-		{
+		if ($this->form->checkInput()) {
 			$this->object->setTitle($this->form->getInput("title"));
 			$this->object->setDescription($this->form->getInput("desc"));
 			$this->object->setOnline($this->form->getInput("online"));
@@ -248,157 +233,232 @@ class ilObjLfEduSharingResourceGUI extends ilObjectPluginGUI
 		$this->form->setValuesByPost();
 		$DIC->ui()->mainTemplate()->setContent($this->form->getHtml());
 	}
-	
-	
 	/**
 	 * Search resource
 	 */
 	function searchResource()
 	{
 		global $DIC;
-		
-		$this->plugin->includeClass("../lib/class.lfEduUtil.php");
-		
-		try
-		{
+////		$settings = new ilSetting("xedus");
+//		$edusharingservice = new EduSharingService();
+//		$ticket            = $edusharingservice->getTicket();
+////		$searchurl    = $settings->get('application_cc_gui_url');
+//		$stext = ilUtil::stripSlashes($_POST["edus_svalue"]);
+//		$re_url = ILIAS_HTTP_PATH . '/' . $DIC->ctrl()->getLinkTarget($this, "setResource", "", false, false);
+////		$reposearch   = trim($searchurl, '/') . '/components/search?&applyDirectories=false&reurl='.$re_url.'&ticket=' . $ticket;
+////		die(die($reposearch));
+////		ilUtil::redirect($reposearch);
+////		$this->plugin->includeClass("../lib/class.lfEduUtil.php");
+
+		try {
 			$ticket = $this->object->getTicket();
 			$stext = ilUtil::stripSlashes($_POST["edus_svalue"]);
-			$re_url = ILIAS_HTTP_PATH.'/'.$DIC->ctrl()->getLinkTarget($this, "setResource", "", false, false);
-			$url = lfEduUtil::buildUrl("search", $ticket, $stext, $re_url, $DIC->user());
-		}
-		catch (Exception $e)
-		{
-			ilUtil::sendFailure(lfEduUtil::formatException($e), true);
+			$re_url = ILIAS_HTTP_PATH . '/' . $DIC->ctrl()->getLinkTarget($this, "setResource", "", false, false);
+			$url = $this->buildUrl("search", $ticket, $stext, $re_url, $DIC->user());
+			ilUtil::redirect($url);
+		} catch (Exception $e) {
+			ilUtil::sendFailure($this->formatException($e), true);
 			$DIC->ctrl()->redirect($this, "editProperties");
 		}
-		
-		ilUtil::redirect($url);
 	}
-	
+
 	/**
 	 * Browse for a resource
 	 */
-	function browseResource()
+	protected function browseResource()
 	{
 		global $DIC;
-		
-		try
-		{
-			$this->plugin->includeClass("../lib/class.lfEduUtil.php");
+
+		try {
+//			$this->plugin->includeClass("../lib/class.lfEduUtil.php");
 			$ticket = $this->object->getTicket();
-			$re_url = ILIAS_HTTP_PATH.'/'.$DIC->ctrl()->getLinkTarget($this, "setResource", "", false, false);
-			$url = lfEduUtil::buildUrl("browse", $ticket, "", $re_url, $DIC->user());
-		}
-		catch (Exception $e)
-		{
-			ilUtil::sendFailure(lfEduUtil::formatException($e), true);
+			$re_url = ILIAS_HTTP_PATH . '/' . $DIC->ctrl()->getLinkTarget($this, "setResource", "", false, false);
+			$url = $this->buildUrl("browse", $ticket, "", $re_url, $DIC->user());
+		} catch (Exception $e) {
+			ilUtil::sendFailure($this->formatException($e), true);
 			$DIC->ctrl()->redirect($this, "editProperties");
 		}
 
 		ilUtil::redirect($url);
 	}
-	
 	/**
 	 * Upload resource //needed anymore?
 	 */
 	function uploadResource()
 	{
 		global $DIC;
-		
+
 		// see mod/mod_form.php 114
-		
-		$this->plugin->includeClass("../lib/class.lfEduUtil.php");
-		
-		try
-		{
-			$this->plugin->includeClass("../lib/class.lfEduUtil.php");
+
+		try {
 			$ticket = $this->object->getTicket();
-			$re_url = ILIAS_HTTP_PATH.'/'.$DIC->ctrl()->getLinkTarget($this, "setResource", "", false, false);
-			$url = lfEduUtil::buildUrl("upload", $ticket, "", $re_url, $DIC->user());
-		}
-		catch (Exception $e)
-		{
-			ilUtil::sendFailure(lfEduUtil::formatException($e), true);
+			$re_url = ILIAS_HTTP_PATH . '/' . $DIC->ctrl()->getLinkTarget($this, "setResource", "", false, false);
+			$url = $this->buildUrl("upload", $ticket, "", $re_url, $DIC->user());
+		} catch (Exception $e) {
+			ilUtil::sendFailure($this->formatException($e), true);
 			$DIC->ctrl()->redirect($this, "editProperties");
 		}
-		
+
 		ilUtil::redirect($url);
 	}
 
 	/**
 	 * Set resource
-	 *
 	 * @param
-	 * @return
 	 */
-	function setResource()
+	public function setResource() : void
 	{
 		global $DIC;
-		
-		try
-		{
+
+		try {
 			$new_uri = ilUtil::stripSlashes($_REQUEST["nodeId"]);
 			$this->object->setUri($new_uri);
+			$version = ilUtil::stripSlashes($_REQUEST["v"]);//query
+			$this->object->setObjectVersion($version);
 			$this->object->update();
-		}
-		catch (Exception $e)
-		{
-			ilUtil::sendFailure(lfEduUtil::formatException($e), true);
+		} catch (Exception $e) {
+			ilUtil::sendFailure($this->formatException($e), true);
 			$DIC->ctrl()->redirect($this, "editProperties");
 		}
-		
-		$DIC->ctrl()->redirect($this, "editProperties");
-	}
-	
-	/**
-	 * Register usage
-	 *
-	 * @param
-	 * @return
-	 */
-	function registerUsage()
-	{
-		global $DIC;
-		
-		try
-		{
-//$this->object->deleteAllUsages();
-			$this->object->setUsage();
-		}
-		catch (Exception $e)
-		{
-			ilUtil::sendFailure(lfEduUtil::formatException($e), true);
-			$DIC->ctrl()->redirect($this, "editProperties");
-		}
-		
 		$DIC->ctrl()->redirect($this, "editProperties");
 	}
 
-	
+	/**
+	 * Register usage
+	 * @param
+	 * @return
+	 */
+	public function registerUsage()
+	{
+		global $DIC;
+
+		try {
+//$this->object->deleteAllUsages();
+			$this->object->setUsage();
+		} catch (Exception $e) {
+			ilUtil::sendFailure($this->formatException($e), true);
+			$DIC->ctrl()->redirect($this, "editProperties");
+		}
+
+		$DIC->ctrl()->redirect($this, "editProperties");
+	}
+
 	/**
 	 * Show content
 	 */
-	function showContent()
+	protected function showContent()
 	{
 		global $DIC;
-		
 		$DIC->tabs()->activateTab("content");
-				
-		$this->plugin->includeClass("../lib/class.lfEduUtil.php");
-		
-		if (!$this->object->getUri()) {
+
+		if ($this->object->getUri() == "") {
 			ilUtil::sendFailure($this->plugin->txt("no_resource_set"), true);
 			return;
 		}
-		
+
 		if (!$this->object->checkRegisteredUsage()) {
 			ilUtil::sendFailure($this->plugin->txt("not_visible_now"), true);
 			return;
 		}
 
-		$redirect_url = lfEduUtil::getRenderUrl($this->object, 'window');
+		$edusharing = $this->object; //new stdClass();
 
-		ilUtil::redirect($redirect_url);
+		$displaymode = 'window';
+
+		$settings = new ilSetting("xedus");
+
+		$eduSharingService = new EduSharingService();
+		$utils = new EduSharingUtilityFunctions();
+		$redirectUrl = $utils->getRedirectUrl($edusharing);
+		$ts = $timestamp = round(microtime(true) * 1000);
+		$redirectUrl .= '&ts=' . $ts;
+		$data = $settings->get('application_appid') . $ts . $utils->getObjectIdFromUrl($edusharing->getUri());
+		$baseHelper = new EduSharingHelperBase(
+			$settings->get('application_cc_gui_url'),
+			$settings->get('application_private_key'),
+			$settings->get('application_appid')
+		);
+		$redirectUrl .= '&sig=' . urlencode($baseHelper->sign($data));
+
+		$redirectUrl .= '&signed=' . urlencode($data);
+
+		$backAction = '&closeOnBack=true';
+		// if (empty($edusharing->popup_window)) {
+		// $backAction = '&backLink=' . urlencode($CFG->wwwroot . '/course/view.php?id=' . $courseid);
+		// }
+		// if (!empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'modedit.php') !== false) {
+//		 if (!empty($_SERVER['HTTP_REFERER'])) {
+//		$backAction = '&backLink=' . urlencode($_SERVER['HTTP_REFERER']);
+//	}
+		if (!empty($_SERVER['HTTP_REFERER']) && strpos($_SERVER['HTTP_REFERER'], 'ilobjectcopygui') !== false) {
+			$backAction = '';//'&backLink=' . urlencode('http://172.18.0.1/release_7/'.$DIC->ctrl()->getLinkTarget($this, "editProperties"));
+		}
+
+		if ($displaymode != "inline") {
+			$redirectUrl .= $backAction;
+		}
+
+		$ticket = $eduSharingService->getTicket();
+		$redirectUrl .= '&ticket=' . urlencode(base64_encode($utils->encryptWithRepoKey($ticket)));
+
+		ilUtil::redirect($redirectUrl);
+	}
+
+	static function buildUrl($a_cmd, $a_ticket, $a_search_text = "", $a_re_url = "", $ilUser) {
+		$settings = new ilSetting("xedus");
+
+		$ccresourcesearch = trim($settings->get('application_cc_gui_url'), '/');
+		if ($a_cmd == "search") {
+			if(version_compare($settings->get('repository_version'), '4' ) >= 0) {
+				$ccresourcesearch .= '/components/search';
+				$ccresourcesearch .= '?locale=' . $ilUser->getLanguage();
+				if ($a_search_text != "") {
+					$ccresourcesearch .= "&query=" . urlencode($a_search_text);
+				}
+			} else {
+				$ccresourcesearch .= "/?mode=0";
+//				$ccresourcesearch .= "&user=" . urlencode(edusharing_get_auth_key());
+				$ccresourcesearch .= "&locale=" . $ilUser->getLanguage();
+				if ($a_search_text != "") {
+					$ccresourcesearch .= "&p_startsearch=1&p_searchtext=" . urlencode($a_search_text);
+				}
+			}
+		} else {
+			$ccresourcesearch .= "?locale=" . $ilUser->getLanguage();
+		}
+		$ccresourcesearch .= '&ticket='.$a_ticket;
+		$ccresourcesearch .= '&applyDirectories=true'; // used in 4.2 or higher
+		// $ccresourcesearch .= "&reurl=".urlencode($CFG->wwwroot."/mod/edusharing/makelink.php");
+		if ($a_re_url != "") $ccresourcesearch .= "&reurl=".urlencode($a_re_url);
+		//$ccresourcesearch = $CFG->wwwroot .'/mod/edusharing/selectResourceHelper.php?sesskey='.sesskey().'&rurl=' . urlencode($ccresourcesearch);
+		return $ccresourcesearch;
+	}
+
+	public static function formatException(Exception $e) : string
+	{
+		$mess = "Sorry. An error occured when processing your edu-sharing request.";
+
+		$mess .= "<br />" . $e->getMessage() . " (" . $e->getCode() . " / " . get_class($e) . ")";
+
+		if (!empty($e->detail)) {
+			if (!empty($e->detail->fault)) {
+				if (!empty($e->detail->fault->message)) {
+					$mess .= "<br />" . $e->detail->fault->message;
+				}
+			}
+			if (!empty($e->detail->exceptionName)) {
+				$mess .= "<br />exception name: " . $e->detail->exceptionName;
+			}
+			if (!empty($e->detail->hostname)) {
+				$mess .= "<br />hostname: " . $e->detail->hostname;
+			}
+
+//			$mess.= "<br />".print_r($e->detail, true);
+		}
+
+		$mess .= "<br /><br />" . nl2br($e->getTraceAsString());
+
+		return $mess;
 	}
 
 }

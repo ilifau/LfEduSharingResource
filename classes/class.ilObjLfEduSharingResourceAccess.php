@@ -57,16 +57,30 @@ class ilObjLfEduSharingResourceAccess extends ilObjectPluginAccess
 	/**
 	 * Check online status of edusharing resource object
 	 */
-	static function checkOnline($a_id,$a_parent_id)
+	static function checkOnline($a_id,$a_parent_id): bool
 	{
 		global $DIC;
 		
-		$set = $DIC->database()->query("SELECT is_online FROM rep_robj_xesr_usage ".
+		$set = $DIC->database()->query("SELECT is_online, edus_uri FROM rep_robj_xesr_usage ".
 			" WHERE id = ".$DIC->database()->quote($a_id, "integer").
 			" AND parent_obj_id = ".$DIC->database()->quote($a_parent_id, "integer")
 			);
 		$rec  = $DIC->database()->fetchAssoc($set);
-		return (boolean) $rec["is_online"];
+		$online = (boolean) $rec["is_online"];
+		$uri = (string) $rec["edus_uri"];
+		if ($uri == "" && $online) {
+			$DIC->database()->update('rep_robj_xesr_usage',
+				array(
+					'is_online'	=> array('integer', 0)
+				),
+				array(
+					'id' => array('integer', $a_id),
+					'parent_obj_id' => array('integer', $a_parent_id)
+				)
+			);
+			$online = false;
+		}
+		return $online;
 	}
 	
 }

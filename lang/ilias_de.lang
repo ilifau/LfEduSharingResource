@@ -3,6 +3,7 @@
 //
 
 <!-- language file start -->
+<<<<<<< HEAD
 obj_xesr#:#SMART vhb-Einheit
 objs_xesr#:#SMART vhb-Einheiten
 obj_xesr_duplicate#:#Kopieren
@@ -20,6 +21,25 @@ grp_create_xesr#:#SMART vhb-Einheit erstellen
 fold_create_xesr#:#SMART vhb-Einheit erstellen
 root_create_xesr#:#SMART vhb-Einheit erstellen
 cat_create_xesr#:#SMART vhb-Einheit erstellen
+=======
+obj_xesr#:#edu-sharing-Ressource
+objs_xesr#:#edu-sharing-Ressourcen
+obj_xesr_duplicate#:#Kopieren
+objs_xesr_duplicate#:#Kopiere edu-sharing-Ressource
+obj_xesr_select#:#edu-sharing-Ressource auswählen
+xesr_add#:#edu-sharing-Ressource hinzufügen
+xesr_new#:#Neue edu-sharing-Ressource
+xesr_read#:#Lesezugriff auf edu-sharing-Ressource
+xesr_write#:#Schreibzugriff auf edu-sharing-Ressource
+xesr_delete#:#edu-sharing-Ressource löschen
+xesr_visible#:#edu-sharing-Ressource ist sichtbar
+xesr_edit_permission#:#Rechteeinstellungen ändern
+crs_create_xesr#:#edu-sharing-Ressource erstellen
+grp_create_xesr#:#edu-sharing-Ressource erstellen
+fold_create_xesr#:#edu-sharing-Ressource erstellen
+root_create_xesr#:#edu-sharing-Ressource erstellen
+cat_create_xesr#:#edu-sharing-Ressource erstellen
+>>>>>>> original-plugin/kohnle_release_7
 content#:#Inhalt
 properties#:#Einstellungen
 edit_properties#:#Einstellungen ändern
@@ -32,7 +52,11 @@ cancel#:#Abbrechen
 edit#:#Editieren
 status#:#Status
 offline#:#Offline
+<<<<<<< HEAD
 select_resource#:#Einheit auswählen
+=======
+select_resource#:#Ressource auswählen
+>>>>>>> original-plugin/kohnle_release_7
 browse#:#Browsen
 search#:#Suchen
 uri#:#URI
@@ -47,7 +71,11 @@ no#:#Nein
 save#:#Speichern
 settings#:#Einstellungen
 show_configuration#:#Konfiguration anzeigen
+<<<<<<< HEAD
 not_usable_no_course#:#SMART vhb-Einheitn können nur innerhalb von Kursen genutzt werden. Dieses Objekt befindet sich zur Zeit nicht in einem Kurs.
+=======
+not_usable_no_course#:#edu-sharing Ressourcen können nur innerhalb von Kursen genutzt werden. Dieses Objekt befindet sich zur Zeit nicht in einem Kurs.
+>>>>>>> original-plugin/kohnle_release_7
 usage_not_registered#:#Die Nutzung des Objektes innerhalb dieses Kurses wurde noch nicht registriert.
 register_usage#:#Nutzung registrieren
 upload#:#Hochladen
@@ -73,7 +101,11 @@ repository_usagewebservice_wsdl#:#usagewebservice_wsdl
 repository_protocol#:#protocol
 repository_host#:#host
 repository_version#:#version
+<<<<<<< HEAD
 repository_version_info#:#Standard: 4.2
+=======
+repository_version_info#:#Standard: 8.0
+>>>>>>> original-plugin/kohnle_release_7
 authentication_properties#:#Authentication properties (EDU_AUTH_)
 edu_auth_key#:#Key zur Identifizierung des Nutzers
 edu_auth_id#:#Benutzername
@@ -90,6 +122,11 @@ edu_auth_shibbolethuid#:#Shibboleth-UId
 edu_auth_shibbolethuid_info#:#Shibboleth-UId
 edu_auth_zoerr_auth#:#ZOERR-Authentifizierung
 edu_auth_zoerr_auth_info#:#ZOERR-spezielle, auf Shibboleth aufbauende Authentifizierung
+<<<<<<< HEAD
+=======
+edu_auth_random_uid#:#Zufalls-ID kombiniert mit einer eindeutigen ILIAS-Plattform-ID, die als E-Mail-Adresse formatiert ist.
+edu_auth_random_uid_info#:#Pro ILIAS-Benutzer wird eine Zufalls-ID erzeugt, die bei jedem Aufruf identisch bleibt. Die eindeutige ILIAS-Plattform-ID lautet:
+>>>>>>> original-plugin/kohnle_release_7
 edu_auth_param_name_userid#:#PARAM_NAME_USERID
 edu_auth_param_name_userid_info#:#Standard: username
 edu_auth_param_name_lastname#:#PARAM_NAME_LASTNAME
@@ -106,6 +143,7 @@ edu_auth_conveyglobalgroups#:#CONVEYGLOBALGROUPS
 edu_auth_conveyglobalgroups_info#:#Standard: Nein 
 guest_properties#:#Guest properties (edu_guest_)
 edu_guest_option#:#Gastzugang für alle
+<<<<<<< HEAD
 edu_guest_option_info#:#Standard: Nein; Aktivieren Sie diese Option wenn die (gemeinsame) Authentifizierung mit einem zentralen edu-sharing-Repositorium noch nicht geklärt ist oder Datenschutzerfordernisse die Übermittlung von z.B. einer UserID oder eines Nachnamens zum edu-sharing-Repositorium nicht erlauben. ILIAS-Benutzer mit der globalen Rollen 'Anonymous' erhalten stets nur einen Gastzugang für das edu-sharing-Repositorium.
 edu_guest_guest_id#:#guest_id
 edu_guest_guest_id_info#:#Standard: esguest
@@ -118,3 +156,20 @@ object_version_use_exact#:#Kein Update dieser Version
 object_version_use_exact_info#:#Die Einheit verbliebe bei Version
 not_visible_now#:#Die Einheit kann vorübergehend nicht angezeigt werden.
 no_resource_set#:#Keine Einheit wurde ausgewählt. Die Einstellungen sollten bei diesem Objekt überprüft werden.
+=======
+edu_guest_option_info#:#Standard: Nein; Aktivieren Sie diese Option wenn die (gemeinsame) Authentifizierung mit einem zentralen edu-sharing-Repositorium noch nicht geklärt ist oder Datenschutzerfordernisse die Übermittlung von z.B. einer UserID oder eines Nachnamens zum edu-sharing-Repositorium nicht erlauben. ILIAS-Benutzer mit der globalen Rolle 'Anonymous' erhalten stets nur einen Gastzugang für das edu-sharing-Repositorium.
+edu_guest_guest_id#:#guest_id
+edu_guest_guest_id_info#:#Standard: esguest
+import_metadata#:#Mit Heimat-Repositorium verbinden
+import_metadata_saved#:#Erfolgreich gespeichert
+import_application_metadata#:#Mit Heimat-Repositorium verbinden (Achtung: Konfigurationsdaten werden überschrieben)
+metadata_endpoint#:#Metadata endpoint
+metadata_endpoint_info#:#Beispiel: http://edu-sharing-server/edu-sharing/metadata?format=lms&external=true
+metadata_import#:#Metadaten importieren
+object_version_use_exact#:#Kein Update dieser Version
+object_version_use_exact_info#:#Die Ressource verbleibt bei Version
+not_visible_now#:#Die Ressource kann vorübergehend nicht angezeigt werden.
+no_resource_set#:#Keine Ressource wurde ausgewählt. Die Einstellungen sollten bei diesem Objekt überprüft werden.
+send_additional_auth#:#Übermittlung zusätzlicher Authentifizierungsinfos
+send_additional_auth_info#:#Ist diese Option aktiviert, werden bei der app auth Anfrage Vor- und Nachname sowie E-Mail-Addresse übermittelt.
+>>>>>>> original-plugin/kohnle_release_7
