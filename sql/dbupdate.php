@@ -15,19 +15,34 @@ $fields = array(
 	)
 );
 
+//FAU
+if (!$ilDB->tableExists('rep_robj_xesr_data')) {
+//_FAU_ASW
 $ilDB->createTable("rep_robj_xesr_data", $fields);
 $ilDB->addPrimaryKey("rep_robj_xesr_data", array("id"));
-
+//FAU
+}
+//_FAU_ASW
 ?>
 <#2>
 <?php
+//FAU
+if (!$ilDB->tableColumnExists('rep_robj_xesr_data', 'is_online')) {
+    $ilDB->addTableColumn("rep_robj_xesr_data", "is_online", array(
+        'type' => 'integer',
+        'length' => 4,
+        'notnull' => true
+    ));
+}
 
+/*
 $ilDB->addTableColumn("rep_robj_xesr_data", "is_online", array(
 		'type' => 'integer',
 		'length' => 4,
 		'notnull' => true
 	)
-	);
+*/
+//FAU_ASW
 
 ?>
 <#3>
@@ -51,10 +66,14 @@ $fields = array(
 		'notnull' => true
 	)
 );
-
+//FAU
+if (!$ilDB->tableExists('rep_robj_xesr_usage')) {
+//_FAU
 $ilDB->createTable("rep_robj_xesr_usage", $fields);
 $ilDB->addIndex("rep_robj_xesr_usage", array("id"), "i1");
-
+//FAU
+}
+//FAU
 ?>
 <#4>
 <?php
@@ -77,16 +96,42 @@ $fields = array(
 		'notnull' => true
 	)
 );
+//FAU
+if (!$ilDB->tableExists('rep_robj_xesp_usage')) {
+    $ilDB->createTable("rep_robj_xesp_usage", $fields);
+}
 
-$ilDB->createTable("rep_robj_xesp_usage", $fields);
+//$ilDB->createTable("rep_robj_xesp_usage", $fields);
+//_FAU 
+
 ?>
 <#5>
 <?php
-	$ilDB->addPrimaryKey("rep_robj_xesp_usage", array("id"));
+
+// Prüfen, ob die Tabelle bereits einen Primärschlüssel hat
+function hasPrimaryKey($table_name, $ilDB) {
+    $query = "SHOW INDEX FROM {$table_name} WHERE Key_name = 'PRIMARY'";
+    $result = $ilDB->query($query);
+    return ($ilDB->numRows($result) > 0);
+}
+
+// Überprüfen, ob 'rep_robj_xesp_usage' bereits einen Primärschlüssel hat
+if (!hasPrimaryKey('rep_robj_xesp_usage', $ilDB)) {
+    $ilDB->addPrimaryKey("rep_robj_xesp_usage", array("id"));
+}
+
+//	$ilDB->addPrimaryKey("rep_robj_xesp_usage", array("id"));
 ?>
+
+
 <#6>
 <?php
-	$ilDB->createSequence("rep_robj_xesp_usage");
+
+if (!$ilDB->tableExists('rep_robj_xesp_usage_seq')) {
+    $ilDB->createSequence("rep_robj_xesp_usage");
+}
+
+//$ilDB->createSequence("rep_robj_xesp_usage");
 ?>
 <#7>
 <?php
@@ -185,7 +230,7 @@ if(!$ilDB->tableColumnExists('rep_robj_xesr_usage', 'is_online')) {
 if($ilDB->tableColumnExists('rep_robj_xesr_usage', 'parent_obj_id')) {
 	$ilDB->manipulate("DELETE FROM rep_robj_xesr_usage WHERE id=0");
 
-	$ilDB->addPrimaryKey("rep_robj_xesr_usage", array("id","parent_obj_id"));
+	//$ilDB->addPrimaryKey("rep_robj_xesr_usage", array("id","parent_obj_id"));
 }
 ?>
 <#12>
