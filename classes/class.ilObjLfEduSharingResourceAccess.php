@@ -1,9 +1,5 @@
 <?php
 
-/* Copyright (c) 2012 Leifos GmbH, GPL */
-
-include_once("./Services/Repository/classes/class.ilObjectPluginAccess.php");
-
 /**
  * Access/Condition checking for Edusharing resource object
  *
@@ -28,14 +24,14 @@ class ilObjLfEduSharingResourceAccess extends ilObjectPluginAccess
 	*
 	* @return	boolean		true, if everything is ok
 	*/
-	function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = "")
+	function _checkAccess(string $a_cmd, string $a_permission, int $a_ref_id, int $a_obj_id, ?int $a_user_id = null): bool
 	{
 		global $DIC;
 		global $tree;
 		$parent_ref_id = $tree->getParentId($a_ref_id);
 		$parent_id = ilObject::_lookupObjId($parent_ref_id);
 
-		if ($a_user_id == "")
+		if (!isset($a_user_id))
 		{
 			$a_user_id = $DIC->user()->getId();
 		}
@@ -57,16 +53,30 @@ class ilObjLfEduSharingResourceAccess extends ilObjectPluginAccess
 	/**
 	 * Check online status of edusharing resource object
 	 */
-	static function checkOnline($a_id,$a_parent_id)
+	static function checkOnline($a_id,$a_parent_id): bool
 	{
 		global $DIC;
 		
-		$set = $DIC->database()->query("SELECT is_online FROM rep_robj_xesr_usage ".
-			" WHERE id = ".$DIC->database()->quote($a_id, "integer").
-			" AND parent_obj_id = ".$DIC->database()->quote($a_parent_id, "integer")
+		$set = $DIC->database()->query("SELECT is_online, edus_uri FROM rep_robj_xesr_usage ".
+			" WHERE id = ".$DIC->database()->quote($a_id, "integer")
+//			. " AND parent_obj_id = ".$DIC->database()->quote($a_parent_id, "integer")
 			);
 		$rec  = $DIC->database()->fetchAssoc($set);
-		return (boolean) $rec["is_online"];
+		$online = (boolean) $rec["is_online"];
+		$uri = (string) $rec["edus_uri"];
+		if ($uri == "" && $online) {
+			$DIC->database()->update('rep_robj_xesr_usage',
+				array(
+					'is_online'	=> array('integer', 0)
+				),
+				array(
+					'id' => array('integer', $a_id)//,
+//					'parent_obj_id' => array('integer', $a_parent_id)
+				)
+			);
+			$online = false;
+		}
+		return $online;
 	}
 	
 }

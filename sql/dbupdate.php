@@ -201,3 +201,23 @@ if(!$ilDB->tableColumnExists('rep_robj_xesr_usage', 'timemodified')) {
 }
 
 ?>
+<#13>
+<?php
+if (!$ilDB->tableExists('rep_robj_xesr_users')) {
+    $ilDB->createTable('rep_robj_xesr_users', array(
+        'usr_id' => array(
+            'type' => 'integer',
+            'length' => 4,
+            'notnull' => true,
+            'default' => 0
+        ),
+        'usr_ident' => array(
+            'type' => 'text',
+            'length' => 255,
+            'notnull' => false
+        )
+    ));
+
+    $ilDB->addPrimaryKey('rep_robj_xesr_users', array('usr_id'));
+}
+?>
