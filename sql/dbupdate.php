@@ -1,121 +1,93 @@
 <#1>
 <?php
 
-if (!$ilDB->tableExists('rep_robj_xesr_data')) {
-    $fields = array(
-        'id' => array(
-            'type' => 'integer',
-            'length' => 4,
-            'notnull' => true
-        ),
-        'edus_uri' => array(
-            'type' => 'text',
-            'length' => 1000,
-            'fixed' => false,
-            'notnull' => false
-        )
-    );
+$fields = array(
+	'id' => array(
+		'type' => 'integer',
+		'length' => 4,
+		'notnull' => true
+	),
+	'edus_uri' => array(
+		'type' => 'text',
+		'length' => 1000,
+		'fixed' => false,
+		'notnull' => false
+	)
+);
 
-    $ilDB->createTable("rep_robj_xesr_data", $fields);
-    $ilDB->addPrimaryKey("rep_robj_xesr_data", array("id"));
-}
+$ilDB->createTable("rep_robj_xesr_data", $fields);
+$ilDB->addPrimaryKey("rep_robj_xesr_data", array("id"));
 
 ?>
 <#2>
 <?php
 
-if ($ilDB->tableExists('rep_robj_xesr_data') && !$ilDB->tableColumnExists("rep_robj_xesr_data", "is_online")) {
-    $ilDB->addTableColumn("rep_robj_xesr_data", "is_online", array(
-            'type' => 'integer',
-            'length' => 4,
-            'notnull' => true
-        )
-    );
-}
+$ilDB->addTableColumn("rep_robj_xesr_data", "is_online", array(
+		'type' => 'integer',
+		'length' => 4,
+		'notnull' => true
+	)
+	);
 
 ?>
-
 <#3>
 <?php
 
-if (!$ilDB->tableExists('rep_robj_xesr_usage')) {
-    $fields = array(
-        'id' => array(
-            'type' => 'integer',
-            'length' => 4,
-            'notnull' => true
-        ),
-        'edus_uri' => array(
-            'type' => 'text',
-            'length' => 1000,
-            'fixed' => false,
-            'notnull' => false
-        ),
-        'crs_ref_id' => array(
-            'type' => 'integer',
-            'length' => 4,
-            'notnull' => true
-        )
-    );
+$fields = array(
+	'id' => array(
+		'type' => 'integer',
+		'length' => 4,
+		'notnull' => true
+	),
+	'edus_uri' => array(
+		'type' => 'text',
+		'length' => 1000,
+		'fixed' => false,
+		'notnull' => false
+	),
+	'crs_ref_id' => array(
+		'type' => 'integer',
+		'length' => 4,
+		'notnull' => true
+	)
+);
 
-    $ilDB->createTable("rep_robj_xesr_usage", $fields);
-    $ilDB->addIndex("rep_robj_xesr_usage", array("id"), "i1");
-}
+$ilDB->createTable("rep_robj_xesr_usage", $fields);
+$ilDB->addIndex("rep_robj_xesr_usage", array("id"), "i1");
 
 ?>
-
 <#4>
 <?php
 
-if (!$ilDB->tableExists('rep_robj_xesp_usage')) {
-    $fields = array(
-        'id' => array(
-            'type' => 'integer',
-            'length' => 4,
-            'notnull' => true
-        ),
-        'edus_uri' => array(
-            'type' => 'text',
-            'length' => 1000,
-            'fixed' => false,
-            'notnull' => false
-        ),
-        'obj_id' => array(
-            'type' => 'integer',
-            'length' => 4,
-            'notnull' => true
-        )
-    );
+$fields = array(
+	'id' => array(
+		'type' => 'integer',
+		'length' => 4,
+		'notnull' => true
+	),
+	'edus_uri' => array(
+		'type' => 'text',
+		'length' => 1000,
+		'fixed' => false,
+		'notnull' => false
+	),
+	'obj_id' => array(
+		'type' => 'integer',
+		'length' => 4,
+		'notnull' => true
+	)
+);
 
-    $ilDB->createTable("rep_robj_xesp_usage", $fields);
-}
-
+$ilDB->createTable("rep_robj_xesp_usage", $fields);
 ?>
-
 <#5>
 <?php
-
-if ($ilDB->tableExists('rep_robj_xesp_usage')) {
-    try {
-        // Versuche, den Primärschlüssel hinzuzufügen
-        $ilDB->addPrimaryKey("rep_robj_xesp_usage", array("id"));
-    } catch (Exception $e) {
-        // Falls ein Fehler auftritt, bedeutet das, dass der Primärschlüssel bereits existiert
-        // Sie können den Fehler hier ignorieren oder loggen
-    }
-}
-
+	$ilDB->addPrimaryKey("rep_robj_xesp_usage", array("id"));
 ?>
-
 <#6>
 <?php
-
-if (!$ilDB->sequenceExists("rep_robj_xesp_usage")) {
-    $ilDB->createSequence("rep_robj_xesp_usage");
-}
-
+	$ilDB->createSequence("rep_robj_xesp_usage");
 ?>
-
 <#7>
 <?php
 
